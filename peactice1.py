@@ -3,8 +3,12 @@
 import pandas as pd
 import geopandas
 import matplotlib.pyplot as plt
+from shapely.geometry import Point, Polygon, LineString
+
 
 countries = geopandas.read_file(r"geopandas-tutorial-song\data\ne_110m_admin_0_countries\ne_110m_admin_0_countries.shp")
+cities = geopandas.read_file(r"geopandas-tutorial-song\data\ne_110m_populated_places")
+rivers = geopandas.read_file(r"geopandas-tutorial-song\data\ne_50m_rivers_lake_centerlines")
 
 
 def print_head_date(__data):
@@ -58,7 +62,26 @@ def data_to_shp(__data):
     __data.to_file(driver='ESRI Shapefile',filename='world_out.shp')
 
 
-point = get_centroid(countries)
+def area_and_distance():
+    p = Point(0, 0)
+    polygon = Polygon([(1, 1), (2,2), (2, 1)])
+    # 多边形面积
+    a = polygon.area
+    # 点到多边形的距离
+    d = polygon.distance(p)
+    print(a)
+    print(d)
 
-date_to_shp(point)
+def show_together():
+    '''Plotting our different layers together'''
+    # 轮廓，填充，尺寸
+    ax = countries.plot(edgecolor='green', facecolor='none', figsize=(15, 10))
+    rivers.plot(ax=ax, )
+    cities.plot(ax=ax, color='red')
+    # 设置显示的经纬度
+    ax.set(xlim=(-20, 60), ylim=(-40, 40))
+    return ax
 
+ax = show_together()
+
+plt.show()
